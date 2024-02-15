@@ -10,12 +10,8 @@ class SmartPlug:    # Task 1
         return self.switchedOn
 
     def getConsumptionRate(self):
-        if self.consumptionRate <= 150 and self.consumptionRate >= 0:
-            return self.getConsumptionRate
-        else:
-            errorMessage = "Invalid consumption rate."    # Check if this is okay
-            return errorMessage
-
+        return self.consumptionRate
+        
     def setConsumptionRate(self, rate):
         if rate <= 150 and rate >= 0:
             self.consumptionRate = rate
@@ -32,7 +28,7 @@ def testSmartPlug():
     mySmartPlug = SmartPlug(45)
     mySmartPlug.toggleSwitch()
     print(mySmartPlug.getSwitchedOn())
-    print(mySmartPlug.getConsumptionRate())  
+    print(mySmartPlug.getConsumptionRate())
     mySmartPlug.setConsumptionRate(77)
     print(mySmartPlug.getConsumptionRate())
     print(mySmartPlug)
