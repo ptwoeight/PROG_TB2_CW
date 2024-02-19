@@ -1,0 +1,13 @@
+task 1-3 in backend.py
+task 4-5 in frontend.py
+
+THERE IS A CHALLENGE BUT TRY IT TRICE
+
+submitted in .zip
+
+[task 1]
+
+
+my custom smart device from table 1:
+3  |  SmartTV  |  option: 'channel' (1-734)  |  default value: 1
+
