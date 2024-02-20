@@ -50,7 +50,7 @@ class SmartTV:    # Task 2
         return output    
 
 
-class SmartHome:
+class SmartHome:    # Task 3 - this apparently needs a delete function coz they forgot to put that in the CW smh
     def __init__(self):
         self.devices = []
 
