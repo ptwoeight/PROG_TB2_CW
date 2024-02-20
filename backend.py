@@ -59,7 +59,11 @@ class SmartHome:    # Task 3 - this apparently needs a delete function coz they 
     
     def getDeviceAt(self, index):
         return self.devices[index]
-
+    
+    def removeDeviceAt(self, index):
+        if index < len(self.devices):
+            self.devices.remove(self.devices[index])
+    
     def addDevice(self, device):
         self.devices.append(device)
     
@@ -146,6 +150,10 @@ def testSmartHome():    #Testing SmartHome
     print(mySmartHome)
 
     mySmartHome.turnOnAll()
+
+    print(mySmartHome)
+
+    mySmartHome.removeDeviceAt(0)
 
     print(mySmartHome)
 
