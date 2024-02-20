@@ -13,11 +13,11 @@ class SmartPlug:    # Task 1
         self.switchedOn = not self.switchedOn
         
     def setConsumptionRate(self, rate):
-        if rate <= 150 and rate >= 0:
-            self.consumptionRate = rate
-        else:
-            errorMessage = "Rate is out of bounds."
-            return errorMessage
+        #if rate <= 150 and rate >= 0:
+        self.consumptionRate = rate
+        #else:
+            #errorMessage = "Rate is out of bounds."    # ^^ means no error messages here ^^
+            #return errorMessage
 
     def __str__(self):
         output = f"Current consumption rate: {self.consumptionRate}  |  Status: "
