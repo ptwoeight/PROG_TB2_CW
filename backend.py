@@ -20,8 +20,12 @@ class SmartPlug:    # Task 1
             return errorMessage
 
     def __str__(self):
-        output = f"Current consumption rate: {self.consumptionRate} | Switch 'ON' status: {self.switchedOn}"
-        return output
+        output = f"Current consumption rate: {self.consumptionRate}  |  Status: "
+        if self.getSwitchedOn(): 
+            output += f"ACTIVE."
+        else: 
+            output += f"INACTIVE."
+        return output 
 
 
 class SmartTV:    # Task 2
@@ -46,7 +50,11 @@ class SmartTV:    # Task 2
             return errorMessage
 
     def __str__(self):
-        output = f"Current channel: {self.channel}  |  Switch 'ON' status: {self.switchedOn}"
+        output = f"Current channel: {self.channel}  |  Status: "
+        if self.getSwitchedOn(): 
+            output += f"ACTIVE."
+        else: 
+            output += f"INACTIVE."
         return output    
 
 
