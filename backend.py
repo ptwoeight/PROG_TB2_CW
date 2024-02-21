@@ -22,9 +22,9 @@ class SmartPlug:    # Task 1
     def __str__(self):
         output = f"Current consumption rate: {self.consumptionRate}  |  Status: "
         if self.getSwitchedOn(): 
-            output += f"ACTIVE."
+            output += f"ON"
         else: 
-            output += f"INACTIVE."
+            output += f"OFF"
         return output 
 
 
@@ -52,9 +52,9 @@ class SmartTV:    # Task 2
     def __str__(self):
         output = f"Current channel: {self.channel}  |  Status: "
         if self.getSwitchedOn(): 
-            output += f"ACTIVE."
+            output += f"ON"
         else: 
-            output += f"INACTIVE."
+            output += f"OFF"
         return output    
 
 
