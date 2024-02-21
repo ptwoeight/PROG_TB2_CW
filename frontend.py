@@ -5,7 +5,7 @@ class SmartHomeSystem:
     def __init__(self, listOfDevices):
         self.win = Tk()
         self.win.title("Smart Home System")
-        self.win.geometry("650x200")
+        self.win.geometry("675x275")
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(padx=15, pady=15)
         self.devices = listOfDevices
@@ -19,7 +19,7 @@ class SmartHomeSystem:
         btnTurnOnAll = Button(
             self.mainFrame,
             text="Turn on all",
-            width=20,
+            width=30,
             borderwidth=5,
         )
         btnTurnOnAll.grid(column=0, row=0, sticky=W)
@@ -57,10 +57,141 @@ class SmartHomeSystem:
         btnAddDevice = Button(
             self.mainFrame,
             text="Add",
-            width=15,
+            width=25,
             borderwidth=5
         )
         btnAddDevice.grid(column=0, row=6, sticky=W)
+
+        #column 1
+        btnToggle1 = Button(
+            self.mainFrame,
+            text="Toggle",
+            width=15,
+            borderwidth=5
+       )
+        btnToggle1.grid(column=1, row=1, sticky=W)
+
+        btnToggle2 = Button(
+            self.mainFrame,
+            text="Toggle",
+            width=15,
+            borderwidth=5
+        )
+        btnToggle2.grid(column=1, row=2, sticky=W)
+
+        btnToggle3 = Button(
+            self.mainFrame,
+            text="Toggle",
+            width=15,
+            borderwidth=5
+        )
+        btnToggle3.grid(column=1, row=3, sticky=W)
+
+        btnToggle4 = Button(
+            self.mainFrame,
+            text="Toggle",
+            width=15,
+            borderwidth=5
+        )
+        btnToggle4.grid(column=1, row=4, sticky=W)
+
+        btnToggle5 = Button(
+            self.mainFrame,
+            text="Toggle",
+            width=15,
+            borderwidth=5
+        )
+        btnToggle5.grid(column=1, row=5, sticky=W)
+
+        btnTurnOffAll = Button(
+            self.mainFrame,
+            text="Turn off all",
+            width=30,
+            borderwidth=5
+        )
+        btnTurnOffAll.grid(column=1, row=0, columnspan=2, sticky=W)
+
+        #column 2
+        btnEdit1 = Button(
+            self.mainFrame,
+            text="Edit",
+            width=10,
+            borderwidth=5
+        )
+        btnEdit1.grid(column=2, row=1, sticky=W)
+
+        btnEdit2 = Button(
+            self.mainFrame,
+            text="Edit",
+            width=10,
+            borderwidth=5
+        )
+        btnEdit2.grid(column=2, row=2, sticky=W)
+
+        btnEdit3 = Button(
+            self.mainFrame,
+            text="Edit",
+            width=10,
+            borderwidth=5
+        )
+        btnEdit3.grid(column=2, row=3, sticky=W)
+
+        btnEdit4 = Button(
+            self.mainFrame,
+            text="Edit",
+            width=10,
+            borderwidth=5
+        )
+        btnEdit4.grid(column=2, row=4, sticky=W)
+
+        btnEdit5 = Button(
+            self.mainFrame,
+            text="Edit",
+            width=10,
+            borderwidth=5
+        )
+        btnEdit5.grid(column=2, row=5, sticky=W)
+
+        #column 3
+        btnDelete1 = Button(
+            self.mainFrame,
+            text="Delete",
+            width=15,
+            borderwidth=5
+        )
+        btnDelete1.grid(column=3, row=1, sticky=W)
+        
+        btnDelete2 = Button(
+            self.mainFrame,
+            text="Delete",
+            width=15,
+            borderwidth=5
+        )
+        btnDelete2.grid(column=3, row=2, sticky=W)
+        
+        btnDelete3 = Button(
+            self.mainFrame,
+            text="Delete",
+            width=15,
+            borderwidth=5
+        )
+        btnDelete3.grid(column=3, row=3, sticky=W)
+
+        btnDelete4 = Button(
+            self.mainFrame,
+            text="Delete",
+            width=15,
+            borderwidth=5
+        )
+        btnDelete4.grid(column=3, row=4, sticky=W)
+
+        btnDelete5 = Button(
+            self.mainFrame,
+            text="Delete",
+            width=15,
+            borderwidth=5
+        )
+        btnDelete5.grid(column=3, row=5, sticky=W)
 
 def setUpHome():
     mySmartHome = SmartHome()
@@ -101,7 +232,7 @@ def setUpHome():
     
     return finalDevices
 
-def createSmartHomeSystem():
+def main():
     devicesInSmartHome = setUpHome()    # list of devices
 
     mySmartHomeSystem = SmartHomeSystem(devicesInSmartHome)
@@ -111,4 +242,4 @@ def createSmartHomeSystem():
 
 
 # TEST RUN
-createSmartHomeSystem()
+main()
