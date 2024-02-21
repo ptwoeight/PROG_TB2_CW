@@ -167,4 +167,3 @@ def testSmartHome():    #Testing SmartHome
 
 
 # TEST RUN
-testSmartHome()
