@@ -165,5 +165,8 @@ def testSmartHome():    #Testing SmartHome
 
     print(mySmartHome)
 
+    print(mySmartHome.getDevices())
+
 
 # TEST RUN
+testSmartHome()

@@ -2,199 +2,165 @@ from backend import SmartPlug, SmartTV, SmartHome
 from tkinter import *
 
 class SmartHomeSystem:
-    def __init__(self, listOfDevices):
+    def __init__(self, smartHome):
+        self.smartHome = smartHome
         self.win = Tk()
         self.win.title("Smart Home System")
         self.win.geometry("675x275")
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(padx=15, pady=15)
-        self.devices = listOfDevices
+        self.devices = self.smartHome.getDevices()
 
     def runWindow(self):
+        self.deviceLabelFormat()
         self.createWidgets()
         self.win.mainloop()
+    
+    def deviceLabelFormat(self):
+        self.messages = []
+
+        for device in self.devices:
+            if isinstance(device, SmartPlug):
+                output = f"{device.__class__.__name__}: "
+                if device.getSwitchedOn():
+                    output += "ON | "
+                else:
+                    output += "OFF | "
+                output += f"Consumption Rate: {device.getConsumptionRate()}"
+                self.messages.append(output)
+            else:
+                output = f"{device.__class__.__name__}: "
+                if device.getSwitchedOn():
+                    output += "ON | "
+                else:
+                    output += "OFF | "
+                output += f"Channel: {device.getChannel()}"
+                self.messages.append(output)
+
+    def createWidgets(self): # separate this with two methods: createbuttons, createdevicelabels
+        self.listOfWidgets = []
+        self.createButtons()
+        self.createLabels()
         
-    def createWidgets(self):
-        #column 0
+    def createButtons(self):
         btnTurnOnAll = Button(
             self.mainFrame,
             text="Turn on all",
             width=30,
             borderwidth=5,
+            command=self.turnOnAllButton
         )
         btnTurnOnAll.grid(column=0, row=0, sticky=W)
-        
-        lblFirstDevice = Label(
-            self.mainFrame,
-            text=f"{self.devices[0].__class__.__name__}: {self.devices[0].__str__()}"
-        )
-        lblFirstDevice.grid(column=0, row=1, sticky=W)
-
-        lblSecondDevice = Label(
-            self.mainFrame,
-            text=f"{self.devices[1].__class__.__name__}: {self.devices[1].__str__()}"
-        )
-        lblSecondDevice.grid(column=0, row=2, sticky=W)
-
-        lblThirdDevice = Label(
-            self.mainFrame,
-            text=f"{self.devices[2].__class__.__name__}: {self.devices[2].__str__()}"
-        )
-        lblThirdDevice.grid(column=0, row=3, sticky=W)
-
-        lblFourthDevice = Label(
-            self.mainFrame,
-            text=f"{self.devices[3].__class__.__name__}: {self.devices[3].__str__()}"
-        )
-        lblFourthDevice.grid(column=0, row=4, sticky=W)
-
-        lblFifthDevice = Label(
-            self.mainFrame,
-            text=f"{self.devices[4].__class__.__name__}: {self.devices[4].__str__()}"
-        )
-        lblFifthDevice.grid(column=0, row=5, sticky=W)
-
-        btnAddDevice = Button(
-            self.mainFrame,
-            text="Add",
-            width=25,
-            borderwidth=5
-        )
-        btnAddDevice.grid(column=0, row=6, sticky=W)
-
-        #column 1
-        btnToggle1 = Button(
-            self.mainFrame,
-            text="Toggle",
-            width=15,
-            borderwidth=5
-       )
-        btnToggle1.grid(column=1, row=1, sticky=W)
-
-        btnToggle2 = Button(
-            self.mainFrame,
-            text="Toggle",
-            width=15,
-            borderwidth=5
-        )
-        btnToggle2.grid(column=1, row=2, sticky=W)
-
-        btnToggle3 = Button(
-            self.mainFrame,
-            text="Toggle",
-            width=15,
-            borderwidth=5
-        )
-        btnToggle3.grid(column=1, row=3, sticky=W)
-
-        btnToggle4 = Button(
-            self.mainFrame,
-            text="Toggle",
-            width=15,
-            borderwidth=5
-        )
-        btnToggle4.grid(column=1, row=4, sticky=W)
-
-        btnToggle5 = Button(
-            self.mainFrame,
-            text="Toggle",
-            width=15,
-            borderwidth=5
-        )
-        btnToggle5.grid(column=1, row=5, sticky=W)
 
         btnTurnOffAll = Button(
             self.mainFrame,
             text="Turn off all",
             width=30,
-            borderwidth=5
+            borderwidth=5,
+            command=self.turnOffAllButton
         )
         btnTurnOffAll.grid(column=1, row=0, columnspan=2, sticky=W)
 
-        #column 2
-        btnEdit1 = Button(
-            self.mainFrame,
-            text="Edit",
-            width=10,
-            borderwidth=5
-        )
-        btnEdit1.grid(column=2, row=1, sticky=W)
+        for i in range(len(self.devices)):
+            btnToggle = Button(
+                self.mainFrame,
+                text="Toggle",
+                width=15,
+                borderwidth=5,
+                command= lambda index=i: self.toggleButton(index)
+            )   
+            btnToggle.grid(column=1, row=i+1, sticky=W)
 
-        btnEdit2 = Button(
-            self.mainFrame,
-            text="Edit",
-            width=10,
-            borderwidth=5
-        )
-        btnEdit2.grid(column=2, row=2, sticky=W)
+        for i in range(len(self.devices)):
+            btnEdit = Button(
+                self.mainFrame,
+                text="Edit",
+                width=10,
+                borderwidth=5
+            )
+            btnEdit.grid(column=2, row=i+1, sticky=W)
 
-        btnEdit3 = Button(
-            self.mainFrame,
-            text="Edit",
-            width=10,
-            borderwidth=5
-        )
-        btnEdit3.grid(column=2, row=3, sticky=W)
+        for i in range(len(self.devices)):
+            btnDelete = Button(
+                self.mainFrame,
+                text="Delete",
+                width=15,
+                borderwidth=5
+            )
+            btnDelete.grid(column=3, row=i+1, sticky=W)
 
-        btnEdit4 = Button(
+        btnAddDevice = Button(
             self.mainFrame,
-            text="Edit",
-            width=10,
-            borderwidth=5
+            text="Add",
+            width=25,
+            borderwidth=5,
+            command=self.addButton
         )
-        btnEdit4.grid(column=2, row=4, sticky=W)
+        btnAddDevice.grid(column=0, row=6, sticky=W)
 
-        btnEdit5 = Button(
-            self.mainFrame,
-            text="Edit",
-            width=10,
-            borderwidth=5
-        )
-        btnEdit5.grid(column=2, row=5, sticky=W)
+    def createLabels(self):
+        # label
+        for i in range(len(self.devices)):
+            lblDevice = Label(
+                self.mainFrame,
+                text=self.messages[i]
+            )
+            lblDevice.grid(column=0, row=i+1, sticky=W)
+            self.listOfWidgets.append(lblDevice)
+            
+    def turnOnAllButton(self):
+        self.smartHome.turnOnAll()
+        self.deviceLabelFormat()
+        self.createLabels()
+    
+    def turnOffAllButton(self):
+        self.smartHome.turnOffAll()
+        self.deviceLabelFormat()
+        self.createLabels()
 
-        #column 3
-        btnDelete1 = Button(
-            self.mainFrame,
-            text="Delete",
-            width=15,
-            borderwidth=5
-        )
-        btnDelete1.grid(column=3, row=1, sticky=W)
-        
-        btnDelete2 = Button(
-            self.mainFrame,
-            text="Delete",
-            width=15,
-            borderwidth=5
-        )
-        btnDelete2.grid(column=3, row=2, sticky=W)
-        
-        btnDelete3 = Button(
-            self.mainFrame,
-            text="Delete",
-            width=15,
-            borderwidth=5
-        )
-        btnDelete3.grid(column=3, row=3, sticky=W)
+    def toggleButton(self, index):
+        self.smartHome.toggleSwitch(index)
+        self.deviceLabelFormat()
+        self.createLabels()
+    
+    def addButton(self):
+        newDeviceWindow = Tk()
+        newDeviceWindow.title("Add New Device")
+        newDeviceWindow.geometry("200x100")
+        mainFrame = Frame(newDeviceWindow)
+        mainFrame.pack(padx=10, pady=10)
+        mainFrame.pack()
 
-        btnDelete4 = Button(
-            self.mainFrame,
-            text="Delete",
-            width=15,
-            borderwidth=5
+        lblDevicePrompt = Label(
+            mainFrame,
+            text="Choose a device:"
         )
-        btnDelete4.grid(column=3, row=4, sticky=W)
+        lblDevicePrompt.pack()
 
-        btnDelete5 = Button(
-            self.mainFrame,
-            text="Delete",
-            width=15,
-            borderwidth=5
+        btnSmartPlugOption = Button(
+            mainFrame,
+            text="Smart Plug"
+            
         )
-        btnDelete5.grid(column=3, row=5, sticky=W)
+        btnSmartPlugOption.pack(side="left")
+
+        btnSmartTVOption = Button(
+            mainFrame,
+            text="Smart TV"
+        )
+        btnSmartTVOption.pack(side="right")
+
+        newDeviceWindow.mainloop()
+
+    
+
+
+
+
+
+
 
 def setUpHome():
-    mySmartHome = SmartHome()
     finalDevices = []
 
     prompt = "Choose up to 5 devices for your Smart Home:\n[1] Smart Plug\n[2] Smart TV\n-"
@@ -233,9 +199,12 @@ def setUpHome():
     return finalDevices
 
 def main():
+    mySmartHome = SmartHome()
     devicesInSmartHome = setUpHome()    # list of devices
+    for device in devicesInSmartHome:
+        mySmartHome.addDevice(device)
 
-    mySmartHomeSystem = SmartHomeSystem(devicesInSmartHome)
+    mySmartHomeSystem = SmartHomeSystem(mySmartHome)
     mySmartHomeSystem.runWindow()
 
     
