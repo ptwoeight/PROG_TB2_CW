@@ -11,6 +11,7 @@ class SmartHomeSystem:
         self.mainFrame.grid(padx=15, pady=15)
         self.devices = self.smartHome.getDevices()
         self.deviceCount = len(self.devices)
+        self.listOfWidgets = []
 
     def runWindow(self):
         self.updateDeviceDetails()
@@ -23,12 +24,12 @@ class SmartHomeSystem:
         screenSizeDiff = 260 + (updatedDeviceCount * 30)   # gap per line
         self.win.geometry(f"620x{screenSizeDiff}")
 
-    def updateWindow(self, btnAddDevice):
-        btnAddDevice.grid_forget()
+    def updateWindow(self):
         self.updateDeviceDetails()
         self.createWidgets()
         self.resizeWindow()
 
+   
     def updateDeviceDetails(self):
         self.devices = self.smartHome.getDevices()
         self.deviceCount = len(self.devices)
@@ -56,8 +57,7 @@ class SmartHomeSystem:
                 self.messages.append(output)
 
 
-    def createWidgets(self): # separate this with two methods: createbuttons, createdevicelabels
-        self.listOfWidgets = []
+    def createWidgets(self):
         self.createButtons()
         self.createLabels()
         
@@ -101,7 +101,7 @@ class SmartHomeSystem:
                 text="Edit",
                 width=10,
                 borderwidth=5,
-                command= lambda: self.editButton(i)
+                command= lambda index=i: self.editButton(index)
             )
             btnEdit.grid(column=2, row=i+1, sticky=W)
             self.listOfWidgets.append(btnEdit)
@@ -112,7 +112,7 @@ class SmartHomeSystem:
                 text="Delete",
                 width=15,
                 borderwidth=5,
-                command= lambda: self.deleteButton(i, btnAddDevice, btnToggle, btnEdit, btnDelete)
+                command= lambda index=i: self.deleteButton(index)
             )
             btnDelete.grid(column=3, row=i+1, sticky=W)
             self.listOfWidgets.append(btnDelete)
@@ -125,6 +125,7 @@ class SmartHomeSystem:
             command= lambda: self.addButton(self.win, btnAddDevice)
         )
         btnAddDevice.grid(column=0, row=len(self.devices)+1, sticky=W)
+        self.listOfWidgets.append(btnAddDevice)
 
     def createLabels(self):
         self.updateDeviceDetails()
@@ -148,47 +149,35 @@ class SmartHomeSystem:
         self.formatCurrentDevices()
         self.createLabels()
 
+
     def toggleButton(self, index):
         self.smartHome.toggleSwitch(index)
         self.formatCurrentDevices()
         self.createLabels()
-    
-    def editButton(self, index): #add button?
+
+    def deleteButton(self, index):
+        self.smartHome.removeDeviceAt(index)
+        for widget in self.listOfWidgets:
+            widget.grid_forget()
+        self.updateWindow()
+
+
+    def editButton(self, index):
         editDeviceWin = Toplevel(self.win)
         editDeviceWin.title("Edit Device")
-        editDeviceWin.geometry("80x80")
+        editDeviceWin.geometry("175x85")
         editDeviceFrame = Frame(editDeviceWin)
         editDeviceFrame.grid(padx=15, pady=15)
         deviceType = type(self.smartHome.getDeviceAt(index))
-
-        if deviceType == SmartPlug:
-            editDeviceWin.geometry("150x80")
-            lblUpdateConsumptionRate = Label(
-                editDeviceFrame,
-                text="Update consumption rate:"
-            )
-            lblUpdateConsumptionRate.grid(column=0, row=0, columnspan=2, sticky=N)
-
-            ntrUpdateConsumptionRate = Entry(
-                editDeviceFrame,
-                textvariable=self.devices[index].getConsumptionRate(),
-                width=10
-            )
-            ntrUpdateConsumptionRate.grid(column=0, row=1, columnspan=2, sticky=W)
-
-            btnEnterUpdate = Button(
-                editDeviceFrame,
-                text="Update"
-            )
-            btnEnterUpdate.grid(column=1, row=1, sticky=E)
-
-        elif deviceType == SmartTV:
-            setChannel = self.devices[index].getChannel()
-            editDeviceWin.geometry("150x85")
+        
+        if deviceType == SmartTV:
+            setChannel = IntVar()
+            setChannel.set(self.devices[index].getChannel())
+            setChannelAsInt = setChannel.get()
 
             lblUpdateChannel = Label(
                 editDeviceFrame,
-                text="Set Smart TV channel:"
+                text="Update Smart TV channel:"
             )
             lblUpdateChannel.grid(column=0, row=0)
 
@@ -197,29 +186,61 @@ class SmartHomeSystem:
                 textvariable=setChannel,
                 width=12
             )
-            ntrUpdateChannel.insert(0, self.devices[index].getChannel())
+            # note for potential code
             ntrUpdateChannel.grid(column=0, row=1, sticky=W)
 
             btnEnterUpdate = Button(
                 editDeviceFrame,
                 text="Set",
-                width=4
+                width=4,
+                command= lambda: self.setNewChannel(index, setChannel, editDeviceWin)
             )
             btnEnterUpdate.grid(column=0, row=1, sticky=E)
-        
+
+        elif deviceType == SmartPlug:
+            setConsumptionRate = IntVar()
+            setConsumptionRate.set(self.devices[index].getConsumptionRate())
+            setConsumptionRateAsInt = setConsumptionRate.get()
+
+            lblUpdateConsumptionRate = Label(
+                editDeviceFrame,
+                text="Update consumption rate:"
+            )
+            lblUpdateConsumptionRate.grid(column=0, row=0, columnspan=2)
+
+            ntrUpdateConsumptionRate = Entry(
+                editDeviceFrame,
+                textvariable=setConsumptionRate,
+                width=12
+            )
+            ntrUpdateConsumptionRate.grid(column=0, row=1, sticky=W)
+
+            btnEnterUpdate = Button(
+                editDeviceFrame,
+                text="Update",
+                command= lambda: self.setNewConsumptionRate(index, setConsumptionRate, editDeviceWin)
+            )
+            btnEnterUpdate.grid(column=1, row=1, sticky=E)
+
+        editDeviceWin.protocol("WM_DELETE_WINDOW", editDeviceWin.destroy)
         editDeviceWin.mainloop()
 
-        # ~~~~~~~~~~~~~~ YOU'RE HERE! ~~~~~~~~~~~~~~ #
+    def setNewChannel(self, index, newChannel, editDeviceWin):
+        # add error handling for if not int and if 1-734 (inclusive)
+        # error handling: display message, set it to what it was previously
+        newChannelAsInt = newChannel.get()
+        self.devices[index].setChannel(newChannelAsInt)
+        self.updateWindow()
+        editDeviceWin.destroy()
 
-    def deleteButton(self, index, btnAddDevice, btnToggle, btnEdit, btnDelete):
-        self.smartHome.removeDeviceAt(index)
+    def setNewConsumptionRate(self, index, newConsumptionRate, editDeviceWin):
+        # add error handling for if not in and if 150
+        # error handling: display message, set it to what it was previously
+        newConsumptionRateAsInt = newConsumptionRate.get()
+        self.devices[index].setConsumptionRate(newConsumptionRateAsInt)
+        self.updateWindow()
+        editDeviceWin.destroy()
 
-        for widget in self.listOfWidgets:
-            widget.grid_forget()
-
-        self.updateWindow(btnAddDevice)
-
-        
 
     def addButton(self, win, btnAddDevice):
         newDeviceWin = Toplevel(win)
@@ -237,18 +258,19 @@ class SmartHomeSystem:
         btnSmartPlugOption = Button(
             newDeviceFrame,
             text="Smart Plug",
-            command= lambda: self.addSmartPlug(newDeviceWin, newDeviceFrame, btnAddDevice) # add command to extend window and call method: entry field for consumption rate 
+            command= lambda: self.addSmartPlug(newDeviceWin, newDeviceFrame, btnAddDevice) 
         )
         btnSmartPlugOption.grid(column=0, row=1, sticky=W)
 
         btnSmartTVOption = Button(
             newDeviceFrame,
-            text="Smart TV"
+            text="Smart TV",
+            command= lambda: self.saveNewSmartTV(newDeviceWin, btnAddDevice)
         )
         btnSmartTVOption.grid(column=1, row=1, sticky=E)
 
         newDeviceWin.mainloop()
-    
+   
     def addSmartPlug(self, newDeviceWin, newDeviceFrame, btnAddDevice):
         newDeviceWin.geometry("160x130")
         consumptionRate = IntVar()
@@ -274,15 +296,19 @@ class SmartHomeSystem:
         btnEnter.grid(column=1, row=3, sticky=E, columnspan=2)
 
     def saveNewPlug(self, newDeviceWin, consumptionRate, btnAddDevice):
-        newPlug = SmartPlug(consumptionRate.get())  # converts to int..?
+        newPlug = SmartPlug(consumptionRate.get())  
         self.smartHome.addDevice(newPlug)
-        self.updateWindow(btnAddDevice)
+        btnAddDevice.grid_forget()
+        self.updateWindow()
         newDeviceWin.destroy()
 
-        
 
-
-
+    def saveNewSmartTV(self, newDeviceWin, btnAddDevice):
+        newSmartTV = SmartTV()  
+        self.smartHome.addDevice(newSmartTV)
+        btnAddDevice.grid_forget()
+        self.updateWindow()
+        newDeviceWin.destroy()
 
 
 

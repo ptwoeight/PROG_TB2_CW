@@ -16,3 +16,21 @@ my custom smart device from table 1:
 error handling:
 - try catch errors on front end
 - if u want u can do like range checks in the backend but if theres errors handle it in frontend
+    - channel: 1-734
+    - consumptionRate: 0-150
+
+------------------------
+Once you have successfully built your GUI, you should implement its functionality. 
+For each of the buttons on the GUI, you need to write the code in the SmartHomeSystem class that implements the functionality of the button. 
+
+For instance:
+- When the user clicks on the “Turn on all” button, all devices should be turned on: the backend needs to update, and the GUI should reflect this change. 
+  The same goes for the “Turn off all” button.
+- When a device's “Toggle” button is clicked, the details of the device should be updated. 
+  Clicking on an “Edit” button should result in a new window where the user can modify all attributes of that device.
+  Finally, the “Delete” button should remove the device. 
+  Clicking on any of these buttons should result in both the backend and frontend being updated.
+- When the user clicks on the “Add” button, a new window should appear where they are given the option of whether they want a smart plug or a custom smart device. 
+  For new smart plugs, the user should be able to choose a consumption rate. 
+  The device should then be created and added to the backend (and GUI). 
+

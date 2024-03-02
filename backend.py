@@ -43,7 +43,7 @@ class SmartTV:    # Task 2
         self.switchedOn = not self.switchedOn
 
     def setChannel(self, channel):
-        if channel <= 175 and channel >= 1:
+        if channel <= 734 and channel >= 1:
             self.channel = channel
         else: 
             errorMessage = "Channel does not exist."
@@ -117,7 +117,7 @@ class SmartHome:    # Task 3 - this apparently needs a delete function coz they 
             return output
 
 
-def testSmartPlug():    # Testing SmartPlug
+""" def testSmartPlug():    # Testing SmartPlug
     mySmartPlug = SmartPlug(45)
     mySmartPlug.toggleSwitch()
 
@@ -169,4 +169,4 @@ def testSmartHome():    #Testing SmartHome
 
 
 # TEST RUN
-testSmartHome()
+testSmartHome() """
