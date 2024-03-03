@@ -225,15 +225,14 @@ class SmartHomeSystem:
         editDeviceWin.protocol("WM_DELETE_WINDOW", editDeviceWin.destroy)
         editDeviceWin.mainloop()
 
-    def setNewChannel(self, index, newChannel, editDeviceWin):
+    def setNewChannel(self, index, newChannel, editDeviceWin): # 1-734, if out of range, exit window - device stays the same
         # add error handling for if not int and if 1-734 (inclusive)
-        # error handling: display message, set it to what it was previously
         newChannelAsInt = newChannel.get()
         self.devices[index].setChannel(newChannelAsInt)
         self.updateWindow()
         editDeviceWin.destroy()
 
-    def setNewConsumptionRate(self, index, newConsumptionRate, editDeviceWin):
+    def setNewConsumptionRate(self, index, newConsumptionRate, editDeviceWin): #0-150, if out of range, exit window - device stays the same
         # add error handling for if not in and if 150
         # error handling: display message, set it to what it was previously
         newConsumptionRateAsInt = newConsumptionRate.get()
@@ -242,7 +241,7 @@ class SmartHomeSystem:
         editDeviceWin.destroy()
 
 
-    def addButton(self, win, btnAddDevice):
+    def addButton(self, win, btnAddDevice): 
         newDeviceWin = Toplevel(win)
         newDeviceWin.title("Add New Device")
         newDeviceWin.geometry("160x80")
@@ -271,7 +270,7 @@ class SmartHomeSystem:
 
         newDeviceWin.mainloop()
    
-    def addSmartPlug(self, newDeviceWin, newDeviceFrame, btnAddDevice):
+    def addSmartPlug(self, newDeviceWin, newDeviceFrame, btnAddDevice): # if out of range, exit window - no devices added
         newDeviceWin.geometry("160x130")
         consumptionRate = IntVar()
 
