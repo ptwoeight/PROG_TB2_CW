@@ -165,21 +165,21 @@ class SmartHomeSystem:
     def editButton(self, index):
         editDeviceWin = Toplevel(self.win)
         editDeviceWin.title("Edit Device")
-        editDeviceWin.geometry("175x85")
+        editDeviceWin.geometry("185x85")
         editDeviceFrame = Frame(editDeviceWin)
         editDeviceFrame.grid(padx=15, pady=15)
         deviceType = type(self.smartHome.getDeviceAt(index))
         
         if deviceType == SmartTV:
-            setChannel = IntVar()
+            setChannel = StringVar()
             setChannel.set(self.devices[index].getChannel())
             setChannelAsInt = setChannel.get()
 
             lblUpdateChannel = Label(
                 editDeviceFrame,
-                text="Update Smart TV channel:"
+                text="Set new Smart TV channel:"
             )
-            lblUpdateChannel.grid(column=0, row=0)
+            lblUpdateChannel.grid(column=0, row=0, columnspan=2)
 
             ntrUpdateChannel = Entry(
                 editDeviceFrame,
@@ -187,24 +187,24 @@ class SmartHomeSystem:
                 width=12
             )
             # note for potential code
-            ntrUpdateChannel.grid(column=0, row=1, sticky=W)
+            ntrUpdateChannel.grid(column=0, row=1, sticky=E)
 
             btnEnterUpdate = Button(
                 editDeviceFrame,
                 text="Set",
                 width=4,
-                command= lambda: self.setNewChannel(index, setChannel, editDeviceWin)
+                command= lambda: self.setNewChannel(index, setChannel, editDeviceWin, editDeviceFrame)
             )
-            btnEnterUpdate.grid(column=0, row=1, sticky=E)
+            btnEnterUpdate.grid(column=1, row=1, sticky=W)
 
         elif deviceType == SmartPlug:
-            setConsumptionRate = IntVar()
+            setConsumptionRate = StringVar()
             setConsumptionRate.set(self.devices[index].getConsumptionRate())
             setConsumptionRateAsInt = setConsumptionRate.get()
 
             lblUpdateConsumptionRate = Label(
                 editDeviceFrame,
-                text="Update consumption rate:"
+                text="Set new consumption rate:"
             )
             lblUpdateConsumptionRate.grid(column=0, row=0, columnspan=2)
 
@@ -213,94 +213,148 @@ class SmartHomeSystem:
                 textvariable=setConsumptionRate,
                 width=12
             )
-            ntrUpdateConsumptionRate.grid(column=0, row=1, sticky=W)
+            ntrUpdateConsumptionRate.grid(column=0, row=1, sticky=E)
 
             btnEnterUpdate = Button(
                 editDeviceFrame,
                 text="Update",
-                command= lambda: self.setNewConsumptionRate(index, setConsumptionRate, editDeviceWin)
+                command= lambda: self.setNewConsumptionRate(index, setConsumptionRate, editDeviceWin, editDeviceFrame)
             )
-            btnEnterUpdate.grid(column=1, row=1, sticky=E)
+            btnEnterUpdate.grid(column=1, row=1, sticky=W)
 
         editDeviceWin.protocol("WM_DELETE_WINDOW", editDeviceWin.destroy)
         editDeviceWin.mainloop()
 
-    def setNewChannel(self, index, newChannel, editDeviceWin): # 1-734, if out of range, exit window - device stays the same
-        # add error handling for if not int and if 1-734 (inclusive)
-        newChannelAsInt = newChannel.get()
-        self.devices[index].setChannel(newChannelAsInt)
-        self.updateWindow()
-        editDeviceWin.destroy()
-
-    def setNewConsumptionRate(self, index, newConsumptionRate, editDeviceWin): #0-150, if out of range, exit window - device stays the same
-        # add error handling for if not in and if 150
-        # error handling: display message, set it to what it was previously
-        newConsumptionRateAsInt = newConsumptionRate.get()
-        self.devices[index].setConsumptionRate(newConsumptionRateAsInt)
-        self.updateWindow()
-        editDeviceWin.destroy()
+    def setNewChannel(self, index, newChannel, editDeviceWin, editDeviceFrame): 
+        try:
+            newChannelAsInt = int(newChannel.get())
+            if newChannelAsInt >=1 and newChannelAsInt <= 734:
+                self.devices[index].setChannel(newChannelAsInt)
+                self.updateWindow()
+                editDeviceWin.destroy()
+            else:
+                editDeviceWin.geometry("185x110")
+                lblErrorMessage = Label(
+                    editDeviceFrame,
+                    text="ERROR: Out of bounds\nValues between 1-734 only",
+                    fg="red"
+                )
+                lblErrorMessage.grid(column=0, row=2, columnspan=2)
+        except ValueError:
+            editDeviceWin.geometry("185x110")
+            lblErrorMessage = Label(
+                editDeviceFrame,
+                text="ERROR: Not an integer\nValues between 1-734 only",
+                fg="red"
+            )
+            lblErrorMessage.grid(column=0, row=2, columnspan=2)
+        
+    def setNewConsumptionRate(self, index, newConsumptionRate, editDeviceWin, editDeviceFrame): 
+        try:
+            newConsumptionRateAsInt = newConsumptionRate.get()
+            if newConsumptionRateAsInt >= 0 and newConsumptionRateAsInt <= 150:
+                self.devices[index].setConsumptionRate(newConsumptionRateAsInt)
+                self.updateWindow()
+                editDeviceWin.destroy()
+            else:
+                editDeviceWin.geometry("185x110")
+                lblErrorMessage = Label(
+                    editDeviceFrame,
+                    text="ERROR: Out of bounds\nValues between 0-150 only",
+                    fg="red"
+                )
+                lblErrorMessage.grid(column=0, row=2, columnspan=2)
+        except ValueError:
+            editDeviceWin.geometry("185x110")
+            lblErrorMessage = Label(
+                editDeviceFrame,
+                text="ERROR: Not an integer\nValues between 0-150 only",
+                fg="red"
+            )
+            lblErrorMessage.grid(column=0, row=2, columnspan=2)
 
 
     def addButton(self, win, btnAddDevice): 
         newDeviceWin = Toplevel(win)
         newDeviceWin.title("Add New Device")
-        newDeviceWin.geometry("160x80")
+        newDeviceWin.geometry("195x80")
         newDeviceFrame = Frame(newDeviceWin)
         newDeviceFrame.grid(padx=15, pady=15)
 
         lblDevicePrompt = Label(
             newDeviceFrame,
-            text="Choose a device to add:"
+            text="Choose a new device to add:"
         )
-        lblDevicePrompt.grid(column=0, row=0, sticky=N, columnspan=2)
+        lblDevicePrompt.grid(column=0, row=0, columnspan=2)
 
         btnSmartPlugOption = Button(
             newDeviceFrame,
             text="Smart Plug",
             command= lambda: self.addSmartPlug(newDeviceWin, newDeviceFrame, btnAddDevice) 
         )
-        btnSmartPlugOption.grid(column=0, row=1, sticky=W)
+        btnSmartPlugOption.grid(column=0, row=1, sticky=E)
 
         btnSmartTVOption = Button(
             newDeviceFrame,
             text="Smart TV",
             command= lambda: self.saveNewSmartTV(newDeviceWin, btnAddDevice)
         )
-        btnSmartTVOption.grid(column=1, row=1, sticky=E)
+        btnSmartTVOption.grid(column=1, row=1, sticky=W)
 
         newDeviceWin.mainloop()
    
     def addSmartPlug(self, newDeviceWin, newDeviceFrame, btnAddDevice): # if out of range, exit window - no devices added
-        newDeviceWin.geometry("160x130")
-        consumptionRate = IntVar()
+        newDeviceWin.geometry("195x130")
+        consumptionRate = StringVar()
 
         lblNewPlugPrompt = Label(
             newDeviceFrame,
             text="Set Consumption Rate:"
         )
-        lblNewPlugPrompt.grid(column=0, row=2, sticky=N, columnspan=2)
+        lblNewPlugPrompt.grid(column=0, row=2, columnspan=2)
 
         ntrConsumptionRate = Entry(
             newDeviceFrame,
-            width=12,
+            width=10,
             textvariable=consumptionRate
         )
-        ntrConsumptionRate.grid(column=0, row=3, sticky=W, columnspan=2)
+        ntrConsumptionRate.grid(column=0, row=3)
 
         btnEnter = Button(
             newDeviceFrame,
-            text="Enter", # consider making this a check mark
-            command= lambda: self.saveNewPlug(newDeviceWin, consumptionRate, btnAddDevice)
+            text="Enter", # consider making this a check mark,
+            width=6,
+            command= lambda: self.saveNewPlug(newDeviceWin, newDeviceFrame, consumptionRate, btnAddDevice)
         )
-        btnEnter.grid(column=1, row=3, sticky=E, columnspan=2)
+        btnEnter.grid(column=1, row=3)
 
-    def saveNewPlug(self, newDeviceWin, consumptionRate, btnAddDevice):
-        newPlug = SmartPlug(consumptionRate.get())  
-        self.smartHome.addDevice(newPlug)
-        btnAddDevice.grid_forget()
-        self.updateWindow()
-        newDeviceWin.destroy()
+    def saveNewPlug(self, newDeviceWin, newDeviceFrame, consumptionRate, btnAddDevice):
+        try:
+            consumptionRateAsInt = int(consumptionRate.get())
+            if consumptionRateAsInt >= 0 and consumptionRateAsInt <= 150:
+                newPlug = SmartPlug(consumptionRateAsInt)  
+                self.smartHome.addDevice(newPlug)
+                btnAddDevice.grid_forget()
+                self.updateWindow()
+                newDeviceWin.destroy()
+            else:
+                newDeviceWin.geometry("195x165")
 
+                lblErrorMessage = Label(
+                    newDeviceFrame,
+                    text="ERROR: Out of bounds\nValues between 0-150 only",
+                    fg="red"
+                )
+                lblErrorMessage.grid(column=0, row=4, columnspan=2)
+        except ValueError:
+            newDeviceWin.geometry("195x165")
+            
+            lblErrorMessage = Label(
+                newDeviceFrame,
+                text="ERROR: Not an integer\nValues between 0-150 only",
+                fg="red"
+            )
+            lblErrorMessage.grid(column=0, row=4, columnspan=2)
 
     def saveNewSmartTV(self, newDeviceWin, btnAddDevice):
         newSmartTV = SmartTV()  
