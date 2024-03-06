@@ -19,6 +19,11 @@ error handling:
     - channel: 1-734
     - consumptionRate: 0-150
 
+    - FOR EDIT BUTTON: error prompt on new window
+    - FOR ADD BUTTON (consumptionRate): error prompt on new window
+    error message format:
+
+
 ------------------------
 Once you have successfully built your GUI, you should implement its functionality. 
 For each of the buttons on the GUI, you need to write the code in the SmartHomeSystem class that implements the functionality of the button. 
@@ -33,4 +38,8 @@ For instance:
 - When the user clicks on the “Add” button, a new window should appear where they are given the option of whether they want a smart plug or a custom smart device. 
   For new smart plugs, the user should be able to choose a consumption rate. 
   The device should then be created and added to the backend (and GUI). 
+  -----------------------
+
+  CONSIDER DOING CHALLENGE FEATURES ON A SECOND COPY OF FRONTEND.py
+
 
