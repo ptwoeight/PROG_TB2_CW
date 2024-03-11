@@ -6,32 +6,36 @@ class SmartHomeSystem:
         self.smartHome = smartHome
         self.win = Tk()
         self.win.title("Smart Home System")
-        self.win.geometry("890x260")
+        self.win.geometry("840x260")
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(padx=15, pady=15)
         self.devices = self.smartHome.getDevices()
         self.deviceCount = len(self.devices)
         self.listOfWidgets = []
-        self.hours = [f"{i:02d}:00" for i in range(24)]
+        self.hours = [f"{i:02d}:00" for i in range(24)]     # challenge
         self.currentHour = 0
-        self.lblTime = Label(
+        self.lblTime = Label(   # challenge
             self.mainFrame,
             text=self.hours[self.currentHour],
             font=15
         )
         self.lblTime.grid(column=5, row=0, sticky=E)
-        self.lblTime.after(3000, self.hours[self.currentHour])
-        
+
+    def updateTime(self):   # challenge
+        self.currentHour = (self.currentHour + 1) % 24
+        self.lblTime.config(text=self.hours[self.currentHour])
+        self.win.after(3000, self.updateTime)
+
     def runWindow(self):
         self.updateDeviceDetails()
         self.createWidgets()
-        self.updateTime()
+        self.updateTime()   # challenge
         self.win.mainloop()
 
     def resizeWindow(self):
         updatedDeviceCount = self.deviceCount - 5 # default device count = 5
         screenSizeDiff = 260 + (updatedDeviceCount * 30)   # gap per line for additional devices
-        self.win.geometry(f"890x{screenSizeDiff}")
+        self.win.geometry(f"840x{screenSizeDiff}")
 
     def updateWindow(self):
         self.updateDeviceDetails()
@@ -56,7 +60,7 @@ class SmartHomeSystem:
                     output += "OFF | "
                 output += f"Consumption Rate: {device.getConsumptionRate()}"
                 self.messages.append(output)
-                self.deviceIcons.append(PhotoImage(file="Images/SMARTPLUG.pgm"))
+                self.deviceIcons.append(PhotoImage(file="Images/SMARTPLUG.pgm"))    # challenge
             else:
                 output = f"{device.__class__.__name__}: "
                 if device.getSwitchedOn():
@@ -65,7 +69,7 @@ class SmartHomeSystem:
                     output += "OFF | "
                 output += f"Channel: {device.getChannel()}"
                 self.messages.append(output)
-                self.deviceIcons.append(PhotoImage(file="Images/SMARTTV.pgm"))
+                self.deviceIcons.append(PhotoImage(file="Images/SMARTTV.pgm"))    # challenge
 
 
     def createWidgets(self):
@@ -106,7 +110,6 @@ class SmartHomeSystem:
             btnToggle.grid(column=1, row=i+1, sticky=W)
             self.listOfWidgets.append(btnToggle)
 
-        for i in range(self.deviceCount):
             btnEdit = Button(
                 self.mainFrame,
                 text="Edit",
@@ -117,7 +120,6 @@ class SmartHomeSystem:
             btnEdit.grid(column=2, row=i+1, sticky=W)
             self.listOfWidgets.append(btnEdit)
 
-        for i in range(self.deviceCount):
             btnDelete = Button(
                 self.mainFrame,
                 text="Delete",
@@ -128,17 +130,19 @@ class SmartHomeSystem:
             btnDelete.grid(column=3, row=i+1, sticky=W)
             self.listOfWidgets.append(btnDelete)
 
-        for i in range(self.deviceCount):
-            sbScheduledTime = Spinbox(
+            sbScheduledTime = Spinbox(  # challenge - not functional :(
                 self.mainFrame,
-                values=self.hours
+                values=self.hours,
+                width=10,
+                state="readonly"
             )
             sbScheduledTime.grid(column=4, row=i+1, padx = 5, sticky=E)
+            self.listOfWidgets.append(sbScheduledTime)
 
-        for i in range(self.deviceCount):
-            chkBtnToggleScheduling = Checkbutton(
+            chkBtnToggleScheduling = Checkbutton(   # challenge - not functional :(
                 self.mainFrame,
-                text="Schedule"
+                text="Schedule",
+                command= lambda index=i: self.setScheduledTime(index)
             )
             chkBtnToggleScheduling.grid(column=5, row=i+1, sticky=E)
             self.listOfWidgets.append(chkBtnToggleScheduling)
@@ -153,15 +157,21 @@ class SmartHomeSystem:
         btnAddDevice.grid(column=0, row=len(self.devices)+1, sticky=W)
         self.listOfWidgets.append(btnAddDevice)
 
+    def setScheduledTime(self, index):  # challenge
+        pass
+
     def createLabels(self):
         self.updateDeviceDetails()
 
         for i in range(self.deviceCount):
-            lblImage = Label(
+            
+            lblImage = Label(   # challenge
                 self.mainFrame,
                 image=self.deviceIcons[i]
             )
             lblImage.grid(column=0, row=i+1, sticky=W)
+
+
             lblDevice = Label(
                 self.mainFrame,
                 text=self.messages[i]
@@ -169,10 +179,7 @@ class SmartHomeSystem:
             lblDevice.grid(column=0, row=i+1, padx=25, sticky=W)
             self.listOfWidgets.append(lblDevice)
 
-    def updateTime(self):
-        self.currentHour = (self.currentHour + 1) % 24
-        self.lblTime.config(text=self.hours[self.currentHour])
-        self.win.after(3000, self.updateTime)
+    
         
 
     def turnOnAllButton(self):
