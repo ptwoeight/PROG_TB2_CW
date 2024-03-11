@@ -12,11 +12,10 @@ class SmartHomeSystem:
         self.devices = self.smartHome.getDevices()
         self.deviceCount = len(self.devices)
         self.listOfWidgets = []
-
+        
     def runWindow(self):
         self.updateDeviceDetails()
         self.createWidgets()
-        
         self.win.mainloop()
 
     def resizeWindow(self):
@@ -137,7 +136,6 @@ class SmartHomeSystem:
             )
             lblDevice.grid(column=0, row=i+1, sticky=W)
             self.listOfWidgets.append(lblDevice)
-            
 
     def turnOnAllButton(self):
         self.smartHome.turnOnAll()
