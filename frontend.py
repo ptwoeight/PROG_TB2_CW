@@ -19,8 +19,8 @@ class SmartHomeSystem:
         self.win.mainloop()
 
     def resizeWindow(self):
-        updatedDeviceCount = self.deviceCount - 5 # default is 5
-        screenSizeDiff = 260 + (updatedDeviceCount * 75)   # gap per line
+        updatedDeviceCount = self.deviceCount - 5 # default device count = 5
+        screenSizeDiff = 260 + (updatedDeviceCount * 30)   # gap per line for additional devices
         self.win.geometry(f"620x{screenSizeDiff}")
 
     def updateWindow(self):
