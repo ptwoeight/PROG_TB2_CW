@@ -6,22 +6,32 @@ class SmartHomeSystem:
         self.smartHome = smartHome
         self.win = Tk()
         self.win.title("Smart Home System")
-        self.win.geometry("620x260")
+        self.win.geometry("890x260")
         self.mainFrame = Frame(self.win)
         self.mainFrame.grid(padx=15, pady=15)
         self.devices = self.smartHome.getDevices()
         self.deviceCount = len(self.devices)
         self.listOfWidgets = []
+        self.hours = [f"{i:02d}:00" for i in range(24)]
+        self.currentHour = 0
+        self.lblTime = Label(
+            self.mainFrame,
+            text=self.hours[self.currentHour],
+            font=15
+        )
+        self.lblTime.grid(column=5, row=0, sticky=E)
+        self.lblTime.after(3000, self.hours[self.currentHour])
         
     def runWindow(self):
         self.updateDeviceDetails()
         self.createWidgets()
+        self.updateTime()
         self.win.mainloop()
 
     def resizeWindow(self):
         updatedDeviceCount = self.deviceCount - 5 # default device count = 5
         screenSizeDiff = 260 + (updatedDeviceCount * 30)   # gap per line for additional devices
-        self.win.geometry(f"620x{screenSizeDiff}")
+        self.win.geometry(f"890x{screenSizeDiff}")
 
     def updateWindow(self):
         self.updateDeviceDetails()
@@ -36,7 +46,7 @@ class SmartHomeSystem:
     
     def formatCurrentDevices(self):
         self.messages = []
-
+        self.deviceIcons = []
         for device in self.devices:
             if isinstance(device, SmartPlug):
                 output = f"{device.__class__.__name__}: "
@@ -46,6 +56,7 @@ class SmartHomeSystem:
                     output += "OFF | "
                 output += f"Consumption Rate: {device.getConsumptionRate()}"
                 self.messages.append(output)
+                self.deviceIcons.append(PhotoImage(file="Images/SMARTPLUG.pgm"))
             else:
                 output = f"{device.__class__.__name__}: "
                 if device.getSwitchedOn():
@@ -54,6 +65,7 @@ class SmartHomeSystem:
                     output += "OFF | "
                 output += f"Channel: {device.getChannel()}"
                 self.messages.append(output)
+                self.deviceIcons.append(PhotoImage(file="Images/SMARTTV.pgm"))
 
 
     def createWidgets(self):
@@ -66,7 +78,7 @@ class SmartHomeSystem:
         btnTurnOnAll = Button(
             self.mainFrame,
             text="Turn on all",
-            width=30,
+            width=35,
             borderwidth=5,
             command=self.turnOnAllButton
         )
@@ -76,7 +88,7 @@ class SmartHomeSystem:
         btnTurnOffAll = Button(
             self.mainFrame,
             text="Turn off all",
-            width=30,
+            width=35,
             borderwidth=5,
             command=self.turnOffAllButton
         )
@@ -116,6 +128,21 @@ class SmartHomeSystem:
             btnDelete.grid(column=3, row=i+1, sticky=W)
             self.listOfWidgets.append(btnDelete)
 
+        for i in range(self.deviceCount):
+            sbScheduledTime = Spinbox(
+                self.mainFrame,
+                values=self.hours
+            )
+            sbScheduledTime.grid(column=4, row=i+1, padx = 5, sticky=E)
+
+        for i in range(self.deviceCount):
+            chkBtnToggleScheduling = Checkbutton(
+                self.mainFrame,
+                text="Schedule"
+            )
+            chkBtnToggleScheduling.grid(column=5, row=i+1, sticky=E)
+            self.listOfWidgets.append(chkBtnToggleScheduling)
+
         btnAddDevice = Button(
             self.mainFrame,
             text="Add",
@@ -130,12 +157,23 @@ class SmartHomeSystem:
         self.updateDeviceDetails()
 
         for i in range(self.deviceCount):
+            lblImage = Label(
+                self.mainFrame,
+                image=self.deviceIcons[i]
+            )
+            lblImage.grid(column=0, row=i+1, sticky=W)
             lblDevice = Label(
                 self.mainFrame,
                 text=self.messages[i]
             )
-            lblDevice.grid(column=0, row=i+1, sticky=W)
+            lblDevice.grid(column=0, row=i+1, padx=25, sticky=W)
             self.listOfWidgets.append(lblDevice)
+
+    def updateTime(self):
+        self.currentHour = (self.currentHour + 1) % 24
+        self.lblTime.config(text=self.hours[self.currentHour])
+        self.win.after(3000, self.updateTime)
+        
 
     def turnOnAllButton(self):
         self.smartHome.turnOnAll()
