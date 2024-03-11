@@ -249,7 +249,7 @@ class SmartHomeSystem:
         
     def setNewConsumptionRate(self, index, newConsumptionRate, editDeviceWin, editDeviceFrame): 
         try:
-            newConsumptionRateAsInt = newConsumptionRate.get()
+            newConsumptionRateAsInt = int(newConsumptionRate.get())
             if newConsumptionRateAsInt >= 0 and newConsumptionRateAsInt <= 150:
                 self.devices[index].setConsumptionRate(newConsumptionRateAsInt)
                 self.updateWindow()
