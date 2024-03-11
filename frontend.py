@@ -20,7 +20,7 @@ class SmartHomeSystem:
 
     def resizeWindow(self):
         updatedDeviceCount = self.deviceCount - 5 # default is 5
-        screenSizeDiff = 260 + (updatedDeviceCount * 30)   # gap per line
+        screenSizeDiff = 260 + (updatedDeviceCount * 75)   # gap per line
         self.win.geometry(f"620x{screenSizeDiff}")
 
     def updateWindow(self):
@@ -184,7 +184,6 @@ class SmartHomeSystem:
                 textvariable=setChannel,
                 width=12
             )
-            # note for potential code
             ntrUpdateChannel.grid(column=0, row=1, sticky=E)
 
             btnEnterUpdate = Button(
@@ -301,7 +300,7 @@ class SmartHomeSystem:
 
         newDeviceWin.mainloop()
    
-    def addSmartPlug(self, newDeviceWin, newDeviceFrame, btnAddDevice): # if out of range, exit window - no devices added
+    def addSmartPlug(self, newDeviceWin, newDeviceFrame, btnAddDevice): 
         newDeviceWin.geometry("195x130")
         consumptionRate = StringVar()
 
@@ -320,7 +319,7 @@ class SmartHomeSystem:
 
         btnEnter = Button(
             newDeviceFrame,
-            text="Enter", # consider making this a check mark,
+            text="Enter", 
             width=6,
             command= lambda: self.saveNewPlug(newDeviceWin, newDeviceFrame, consumptionRate, btnAddDevice)
         )
@@ -377,7 +376,7 @@ def setUpHome():
             invalidConsumptionRate = True
 
             while invalidConsumptionRate:
-                inputConsumptionRate = input("Enter Consumption Rate: ")   # do try catch for TypeError
+                inputConsumptionRate = input("Enter Consumption Rate: ")   
 
                 while not inputConsumptionRate.isdigit():
                     print("Value entered is not an integer.")
@@ -391,7 +390,7 @@ def setUpHome():
 
                     invalidConsumptionRate = False
                 else:
-                    print("Value entered is out of bounds.")    #Assume that we don't need to loop back, but you could try add a .sleep and continue to do so
+                    print("Value entered is out of bounds.")    
 
         elif userInput == "2" or userInput.lower() == "smart tv":
             finalDevices.append(SmartTV())
@@ -404,7 +403,7 @@ def setUpHome():
 
 def main():
     mySmartHome = SmartHome()
-    devicesInSmartHome = setUpHome()    # list of devices
+    devicesInSmartHome = setUpHome()    
     for device in devicesInSmartHome:
         mySmartHome.addDevice(device)
 
